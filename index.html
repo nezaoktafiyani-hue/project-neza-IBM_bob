@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="TestForge – AI Test Case Generator. Turn software requirements into structured test cases instantly." />
+  <title>TestForge – AI Test Case Generator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header" role="banner">
+    <div class="header-inner">
+      <div class="logo" aria-label="TestForge logo">
+        <span class="logo-icon" aria-hidden="true">⚙</span>
+        <span class="logo-text">Test<strong>Forge</strong></span>
+      </div>
+      <p class="header-tagline">AI-Powered Test Case Generator</p>
+    </div>
+  </header>
+
+  <!-- ===== MAIN ===== -->
+  <main id="main-content" class="main-grid">
+
+    <!-- ── INPUT PANEL ── -->
+    <section class="card input-panel" aria-labelledby="input-heading">
+      <h2 id="input-heading" class="card-title">
+        <span class="step-badge" aria-hidden="true">1</span>
+        Define Your Requirement
+      </h2>
+
+      <!-- Quick-fill examples -->
+      <div class="example-bar" role="group" aria-label="Quick-fill example requirements">
+        <span class="example-label">Try an example:</span>
+        <button class="btn-example" data-example="login"  aria-label="Fill login example requirement">Login</button>
+        <button class="btn-example" data-example="registration" aria-label="Fill registration example requirement">Registration</button>
+        <button class="btn-example" data-example="search" aria-label="Fill search example requirement">Search</button>
+      </div>
+
+      <!-- Feature type -->
+      <div class="form-group">
+        <label for="featureType" class="form-label">Feature Type</label>
+        <select id="featureType" class="form-select" aria-describedby="featureType-hint">
+          <option value="Login">Login</option>
+          <option value="Registration">Registration</option>
+          <option value="Form Input">Form Input</option>
+          <option value="Search">Search</option>
+          <option value="Payment">Payment</option>
+          <option value="Other">Other</option>
+        </select>
+        <span id="featureType-hint" class="form-hint">Choose the feature area this requirement belongs to.</span>
+      </div>
+
+      <!-- Requirement textarea -->
+      <div class="form-group">
+        <label for="requirementInput" class="form-label">User Story / Requirement <span class="required-star" aria-hidden="true">*</span></label>
+        <textarea
+          id="requirementInput"
+          class="form-textarea"
+          rows="7"
+          placeholder="e.g. As a user, I want to log in with my email and password (min 8 chars) so that I can access my account…"
+          aria-required="true"
+          aria-describedby="req-hint req-error"
+          spellcheck="true"
+        ></textarea>
+        <span id="req-hint" class="form-hint">Describe the feature in plain language. Mention field constraints, formats, or rules for better results.</span>
+        <!-- Error message (hidden by default) -->
+        <span id="req-error" class="form-error" role="alert" aria-live="polite" hidden></span>
+      </div>
+
+      <button id="generateBtn" class="btn-primary" aria-controls="results-section" aria-label="Generate test cases from the requirement">
+        <span class="btn-icon" aria-hidden="true">▶</span>
+        Generate Test Cases
+      </button>
+    </section>
+
+    <!-- ── RESULTS PANEL ── -->
+    <section id="results-section" class="card results-panel" aria-label="Generated test cases" aria-live="polite">
+
+      <!-- Empty state (default) -->
+      <div id="emptyState" class="empty-state" role="status">
+        <div class="empty-icon" aria-hidden="true">📋</div>
+        <h3 class="empty-title">No test cases yet</h3>
+        <p class="empty-body">Fill in a requirement on the left and click <strong>Generate Test Cases</strong> to get started.</p>
+      </div>
+
+      <!-- Results (hidden until generation) -->
+      <div id="resultsContent" class="results-content" hidden>
+
+        <div class="results-header">
+          <h2 id="results-heading" class="card-title">
+            <span class="step-badge" aria-hidden="true">2</span>
+            Generated Test Cases
+          </h2>
+          <!-- Export buttons -->
+          <div class="export-bar" role="group" aria-label="Export test cases">
+            <button id="exportCsvBtn"  class="btn-export" aria-label="Download test cases as CSV">⬇ CSV</button>
+            <button id="exportMdBtn"   class="btn-export" aria-label="Copy test cases as Markdown">📋 Markdown</button>
+          </div>
+        </div>
+
+        <!-- Summary badges -->
+        <div id="summaryBar" class="summary-bar" role="region" aria-label="Test case category summary" aria-live="polite"></div>
+
+        <!-- Filters -->
+        <div class="filter-bar" role="group" aria-label="Filter test cases">
+          <div class="filter-group">
+            <label for="filterCategory" class="filter-label">Category</label>
+            <select id="filterCategory" class="filter-select" aria-label="Filter by category">
+              <option value="all">All categories</option>
+              <option value="Positive">Positive</option>
+              <option value="Negative">Negative</option>
+              <option value="Boundary">Boundary</option>
+              <option value="Edge Case">Edge Case</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="filterPriority" class="filter-label">Priority</label>
+            <select id="filterPriority" class="filter-select" aria-label="Filter by priority">
+              <option value="all">All priorities</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+          <button id="clearFiltersBtn" class="btn-ghost" aria-label="Clear all filters">Clear filters</button>
+        </div>
+
+        <!-- Test cases table -->
+        <div class="table-wrapper" role="region" aria-label="Test cases table" tabindex="0">
+          <table id="testCasesTable" class="tc-table" aria-describedby="results-heading">
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Title</th>
+                <th scope="col">Category</th>
+                <th scope="col">Priority</th>
+                <th scope="col">Preconditions</th>
+                <th scope="col">Steps</th>
+                <th scope="col">Test Data</th>
+                <th scope="col">Expected Result</th>
+              </tr>
+            </thead>
+            <tbody id="testCasesBody" aria-live="polite"></tbody>
+          </table>
+        </div>
+
+        <!-- No results after filter -->
+        <p id="noFilterMatch" class="no-filter-msg" hidden role="status">No test cases match the current filters. <button class="link-btn" id="clearFiltersBtn2" aria-label="Clear all filters">Clear filters</button></p>
+
+      </div><!-- /resultsContent -->
+    </section>
+
+  </main>
+
+  <!-- Toast notification -->
+  <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer" role="contentinfo">
+    <p>TestForge &mdash; IBM Bob Capstone &bull; IT – AI Agent for Programming &bull; Runs fully offline</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
